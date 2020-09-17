@@ -1,0 +1,43 @@
+Artemis usage report:
+
+#JobName        CPUs_requested  CPUs_used       Mem_requested   Mem_used        CPUtime CPUtime_mins    Walltime_req    Walltime_used   Walltime_mins   EfficiencyService_units(CPU_hours)
+align_120       1       1       12.0GB  6.3GB   00:54:24        54.40   01:52:00        00:54:43        54.72   0.99    0.91
+align_120       1       1       12.0GB  6.9GB   00:46:19        46.32   01:52:00        00:48:15        48.25   0.96    0.80
+align_120       1       1       12.0GB  10.9GB  00:54:12        54.20   01:52:00        00:55:02        55.03   0.98    0.92
+align_120       1       1       12.0GB  8.3GB   00:54:11        54.18   01:52:00        00:55:03        55.05   0.98    0.92
+align_120       1       1       12.0GB  8.1GB   00:54:11        54.18   01:52:00        00:55:08        55.13   0.98    0.92
+align_20        1       1       12.0GB  12.0GB  04:48:50        288.83  10:40:00        04:49:25        289.42  1.00    4.82
+align_20        1       1       12.0GB  12.0GB  04:28:37        268.62  10:40:00        04:28:53        268.88  1.00    4.48
+align_20        1       1       12.0GB  12.0GB  05:03:07        303.12  10:40:00        05:04:21        304.35  1.00    5.07
+align_20        1       1       12.0GB  12.0GB  05:03:07        303.12  10:40:00        05:04:50        304.83  0.99    5.08
+align_20        1       1       12.0GB  11.7GB  05:00:52        300.87  10:40:00        05:02:20        302.33  1.00    5.04
+
+
+Artemis queue time report:
+
+#JobName        Queue_time(mins)
+align_120       5.93
+align_120       5.93
+align_120       5.95
+align_120       5.95
+align_120       5.95
+align_20        5.90
+align_20        5.90
+align_20        5.92
+align_20        5.92
+align_20        5.92
+
+
+Raijin usage report:
+
+#JobName        CPUs_requested  CPUs_used       Mem_requested   Mem_used        CPUtime CPUtime_mins    Walltime_req    Walltime_used   Walltime_mins   JobFS_req      JobFS_used       Efficiency      Service_units(CPU_hours)
+align_120       16      16      123.0GB 9.23GB  01:00:26        60.43   00:07:00        00:04:29        4.48    100.0MB 0B      0.84    1.20
+align_120       16      16      123.0GB 8.22GB  01:00:38        60.63   00:07:00        00:04:28        4.47    100.0MB 0B      0.85    1.19
+align_120       16      16      123.0GB 9.23GB  01:00:38        60.63   00:07:00        00:04:35        4.58    100.0MB 0B      0.83    1.22
+align_120       16      16      123.0GB 8.82GB  01:00:42        60.70   00:07:00        00:04:31        4.52    100.0MB 0B      0.84    1.20
+align_120       16      16      123.0GB 9.23GB  01:00:52        60.87   00:07:00        00:04:37        4.62    100.0MB 0B      0.82    1.23
+align_20        16      16      123.0GB 19.69GB 06:02:03        362.05  00:40:00        00:26:38        26.63   100.0MB 0B      0.85    7.10
+align_20        16      16      123.0GB 19.71GB 06:01:40        361.67  00:40:00        00:26:21        26.35   100.0MB 0B      0.86    7.03
+align_20        16      16      123.0GB 19.72GB 06:00:42        360.70  00:40:00        00:26:20        26.33   100.0MB 0B      0.86    7.02
+align_20        16      16      123.0GB 19.68GB 06:00:13        360.22  00:40:00        00:26:13        26.22   100.0MB 0B      0.86    6.99
+align_20        16      16      123.0GB 19.71GB 06:00:17        360.28  00:40:00        00:26:23        26.38   100.0MB 0B      0.85    7.04

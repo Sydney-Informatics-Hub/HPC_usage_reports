@@ -59,7 +59,7 @@ else {
 my @logs=split(' ', `ls $dir\/$prefix*.e*`);
 my $report={};
 
-print "#JobName\tCPUs_requested\tCPUs_used\tMem_requested\tMem_used\tCPUtime\tCPUtime_mins\tWalltime_req\tWalltime_used\tWalltime_mins\tJobFS_req\tJobFS_used\tEfficiency\tService_units(1*CPU_hours)\tQueue\tAccount\tExitStatus\tJobID\n";
+print "#JobName\tCPUs_requested\tCPUs_used\tCPU_percent\tMem_requested\tMem_used\tVMem_used\tCPUtime\tCPUtime_mins\tWalltime_req\tWalltime_used\tWalltime_mins\tJobFS_req\tJobFS_used\tEfficiency\tService_units(1*CPU_hours)\tQueue\tAccount\tExitStatus\tJobID\n";
 
 foreach my $file (@logs) {
 	my $report_found=`grep -im 1 "Job Execution History" $file`;
@@ -73,8 +73,10 @@ foreach my $file (@logs) {
 		# Collect resources used
 		my $used=`grep -im 1 ResourcesUsed $file`;
 		my($cpu_pc_used,$cputime,$mem_used,$cpus_used,$vmem_used,$walltime_used)=split(',',$used);
+		$cpu_pc_used=~s/ResourcesUsed:cpupercent=//g;
 		$cpus_used=~s/ncpus=//g;
 		$mem_used=~s/mem=//g;
+		$vmem_used=~s/vmem=//g;
 		$cputime=~s/cput=//g;
 		my ($cpu_hours, $cpu_mins, $cpu_secs) = split('\:', $cputime);
 		my $cputime_mins = sprintf("%.2f",(($cpu_hours*60) + $cpu_mins + ($cpu_secs/60)));
@@ -82,13 +84,13 @@ foreach my $file (@logs) {
 		$walltime_used=~s/walltime=//g;
 		my ($wall_hours, $wall_mins, $wall_secs) = split('\:', $walltime_used);
 		my $walltime_mins = sprintf("%.2f",(($wall_hours*60) + $wall_mins + ($wall_secs/60)));
-		my $e = sprintf("%.2f",($cputime_mins/$walltime_mins/$cpus_used));
+		my $e = sprintf("%.2f",($cputime_mins/($walltime_mins*$cpus_used)));
 		my $queue=`grep -im 1 QueueUsed $file | cut -d':' -f2`;
 		my $account=`grep -im 1 AccountString $file | cut -d':' -f2`;
 		my $exit=`grep -im 1 ExitStatus $file | cut -d':' -f2`;
 		my $jobid=`grep -im 1 JobId $file | cut -d':' -f2`;
 		chomp($jobname,$cpus_req,$mem_req,$walltime_req,$walltime_used,$queue,$account,$exit,$jobid);
-		print "$jobname\t$cpus_req\t$cpus_used\t$mem_req\t$mem_used\t$cputime\t$cputime_mins\t$walltime_req\t$walltime_used\t$walltime_mins\tNA\tNA\t$e\t$cputime_hours\t$queue\t$account\t$exit\t$jobid\n";
+		print "$jobname\t$cpus_req\t$cpus_used\t$cpu_pc_used\t$mem_req\t$mem_used\t$vmem_used\t$cputime\t$cputime_mins\t$walltime_req\t$walltime_used\t$walltime_mins\tNA\tNA\t$e\t$cputime_hours\t$queue\t$account\t$exit\t$jobid\n";
 	}
 }
 

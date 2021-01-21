@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 #------------------------------------------------------------------
-# artemis_usage_report/1.0 
+# artemis_usage_report/1.1 
 # Platform: University of Sydney's Artemis HPC
 #
 # Description: 
@@ -28,7 +28,7 @@
 # Author: Cali Willet
 # cali.willet@sydney.edu.au
 #
-# Date last modified: 17/04/2019
+# Date last modified: 15/01/2021
 #
 # If you use this script towards a publication, please acknowledge the
 # Sydney Informatics Hub (or co-authorship, where appropriate).
@@ -43,50 +43,55 @@
 
 use warnings;
 use strict;
-use POSIX; 
+use POSIX;
 
 my $dir=`pwd`;
-chomp $dir; 
+chomp $dir;
 
-my $prefix = ''; 
+my $prefix = '';
 if ($ARGV[0]) {
-	$prefix=$ARGV[0]; 
-	chomp $prefix;
+        $prefix=$ARGV[0];
+        chomp $prefix;
 }
 else {
-	print "\n######\nWARNING: no log prefix specified. Will report on all log files in $dir.\n######\n\n"; 
+        print "\n######\nWARNING: no log prefix specified. Will report on all log files in $dir.\n######\n\n";
 }
 
 
-my @logs=split(' ', `ls $dir\/$prefix*.o*usage`);
+my @logs=split(' ', `ls $dir\/$prefix*.o*usage | sort -V`);
 my $report={};
 
-print "#JobName\tCPUs_requested\tCPUs_used\tMem_requested\tMem_used\tCPUtime\tCPUtime_mins\tWalltime_req\tWalltime_used\tWalltime_mins\tEfficiency\tService_units(CPU_hours)\n";
+print "#JobName\tExit_status\tCPUs_requested\tCPUs_used\tMem_requested\tMem_used\tCPUtime\tCPUtime_mins\tWalltime_req\tWalltime_used\tWalltime_mins\tEfficiency\tService_units(CPU_hours)\n";
 
 foreach my $file (@logs) {
-	my @name_fields = split('\/', $file);
-	my ($name, $id) = split('\.', $name_fields[-1]); 
-	my @walltime = split(' ', `grep "Walltime requested" $file`);   
-	my $walltime_req = $walltime[2];
-	my $walltime_used = $walltime[6];		
-	my ($wall_hours, $wall_mins, $wall_secs) = split('\:', $walltime_used); 
-	my $walltime_mins = sprintf("%.2f",(($wall_hours*60) + $wall_mins + ($wall_secs/60)));
-	my @mem = split(' ', `grep "Mem requested" $file`);  
-	my $mem_req = $mem[2];
-	my $mem_used = $mem[6];  
-	my @cpus = split(' ', `grep "Cpus requested" $file`); 
-	my $cpus_req = $cpus[2];
-	my $cpus_used = $cpus[6];  
-	chomp (my $cputime = `grep "Cpu Time" $file | awk '{print \$3}'`);
-	my ($cpu_hours, $cpu_mins, $cpu_secs, $cputime_mins) = 0;
-	my $e = 0; 
-	if ($cpus_used!~m/unknown/) {  
-		$cpus_used = ceil($cpus_used); 
-		($cpu_hours, $cpu_mins, $cpu_secs) = split('\:', $cputime); 
-		$cputime_mins = sprintf("%.2f",(($cpu_hours*60) + $cpu_mins + ($cpu_secs/60)));
-		$e = sprintf("%.2f",($cputime_mins/$walltime_mins/$cpus_used));
-	}  
-	my $SUs = sprintf("%.2f", (($walltime_mins/60)*$cpus_req));
-	print "$name\t$cpus_req\t$cpus_used\t$mem_req\t$mem_used\t$cputime\t$cputime_mins\t$walltime_req\t$walltime_used\t$walltime_mins\t$e\t$SUs\n";
+        my @name_fields = split('\/', $file);
+        my $filename=$name_fields[-1];
+        my ($name, $id) = split('\.', $name_fields[-1]);
+        chomp (my $exit_status=`tail -45 $file | grep "Exit Status:" | awk '{print \$3}'`);
+        my @walltime = split(' ', `tail -45 $file | grep "Walltime requested"`);
+        my $walltime_req = $walltime[2];
+        my $walltime_used = $walltime[6];
+        my ($wall_hours, $wall_mins, $wall_secs) = split('\:', $walltime_used);
+        my $walltime_mins = sprintf("%.2f",(($wall_hours*60) + $wall_mins + ($wall_secs/60)));
+        my @mem = split(' ', `tail -45 $file | grep "Mem requested"`);
+        my $mem_req = $mem[2];
+        my $mem_used = $mem[6];
+        my @cpus = split(' ', `tail -45 $file | grep "Cpus requested"`);
+        my $cpus_req = $cpus[2];
+        my $cpus_used = $cpus[6];
+        chomp (my $cputime = `tail -45 $file | grep "Cpu Time" | awk '{print \$3}'`);
+        my ($cpu_hours, $cpu_mins, $cpu_secs, $cputime_mins) = 0;
+        my $e = 0;
+        if ($cpus_used!~m/unknown/) {
+                $cpus_used = ceil($cpus_used);
+                ($cpu_hours, $cpu_mins, $cpu_secs) = split('\:', $cputime);
+                $cputime_mins = sprintf("%.2f",(($cpu_hours*60) + $cpu_mins + ($cpu_secs/60)));
+                $e = sprintf("%.2f",($cputime_mins/$walltime_mins/$cpus_used));
+                my $SUs = sprintf("%.2f", (($walltime_mins/60)*$cpus_req));
+                print "$filename\t$exit_status\t$cpus_req\t$cpus_used\t$mem_req\t$mem_used\t$cputime\t$cputime_mins\t$walltime_req\t$walltime_used\t$walltime_mins\t$e\t$SUs\n";
+        }
+        else{
+                print "$filename\t$exit_status\t$cpus_req\tunknown\t$mem_req\tunknown\tunknown\tunknown\t$walltime_req\t$walltime_used\t$walltime_mins\tunknown\tunknown\n";
+        }
 }
-print "\n"; 
+print "\n";

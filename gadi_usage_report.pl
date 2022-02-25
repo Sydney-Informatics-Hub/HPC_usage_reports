@@ -21,8 +21,8 @@
 #
 # Usage:
 # command line, eg:
-# perl gadi_usage_report_v1.1.pl /path/to/logdir
-# perl gadi_usage_report_v1.1.pl myjob.o
+# perl gadi_usage_report.pl /path/to/logdir
+# perl gadi_usage_report.pl myjob.o
 #
 # Output:
 # Tab-delimited summary of the resources requested and used for each job

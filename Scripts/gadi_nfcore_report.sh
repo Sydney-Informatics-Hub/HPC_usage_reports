@@ -18,7 +18,7 @@
 # Tab-delimited summary of the resources requested and used for each job
 # will be printed to tsv file: gadi-nf-core-joblogs.tsv.
 #
-# Date last modified: 08/08/23
+# Date last modified: 13/02/2026
 #
 # If you use this script towards a publication, please acknowledge the
 # Sydney Informatics Hub (or co-authorship, where appropriate).
@@ -66,10 +66,10 @@ find work -type f -name ".command.log" | while read -r log_file; do
         if($0 ~ /CPU Time Used/) cpu_time_used = $5
         if($0 ~ /Memory Requested/) memory_requested = $3
         if($0 ~ /Memory Used/) memory_used = $6
-        if($0 ~ /Walltime requested/) walltime_requested = $3
+        if($0 ~ /Walltime Requested/) walltime_requested = $3
         if($0 ~ /Walltime Used/) walltime_used = $6
-        if($0 ~ /JobFS requested/) jobfs_requested = $3
-        if($0 ~ /JobFS used/) jobfs_used = $6
+        if($0 ~ /JobFS Requested/) jobfs_requested = $3
+        if($0 ~ /JobFS Used/) jobfs_used = $6
     }
     END {
         print "'$file_name'", exit_status, service_units, ncpus_requested, ncpus_used, cpu_time_used, memory_requested, memory_used, walltime_requested, walltime_used, jobfs_requested, jobfs_used

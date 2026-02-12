@@ -63,7 +63,7 @@ find work -type f -name ".command.log" | while read -r log_file; do
         if($0 ~ /Service Units/) service_units = $3
         if($0 ~ /NCPUs Requested/) ncpus_requested = $3
         if($0 ~ /NCPUs Used/) ncpus_used = $3
-        if($0 ~ /CPU Time Used/) cpu_time_used = $5
+        if($0 ~ /CPU Time Used/) cpu_time_used = $7
         if($0 ~ /Memory Requested/) memory_requested = $3
         if($0 ~ /Memory Used/) memory_used = $6
         if($0 ~ /Walltime Requested/) walltime_requested = $3

@@ -33,13 +33,14 @@ import argparse
 import re
 import sys
 from pathlib import Path
+from typing import Optional
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def work_key(path: str) -> str | None:
+def work_key(path: str) -> Optional[str]:
     """
     Extract a normalised 'XX/HASH' key from any string that contains a
     Nextflow work directory path.  Works whether the path is:

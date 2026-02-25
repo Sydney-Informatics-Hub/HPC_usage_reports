@@ -55,8 +55,10 @@ find work -type f \( "${SEARCH_PARAMS[@]}" \) -name ".command.log" | \
             jobfs_requested = "NA"
             jobfs_used = "NA"
         }
-        /=====/ {flag=!flag; next}
-        flag {
+        /^=+$/ {flag1=1; next}
+        flag1 && ! /Resource Usage/ {flag1=0; next}
+        flag1 && /Resource Usage/ {flag2=1; next}
+        flag2 {
             if($0 ~ /Exit Status/) exit_status = $3
             if($0 ~ /Service Units/) service_units = $3
             if($0 ~ /NCPUs Requested/) ncpus_requested = $3

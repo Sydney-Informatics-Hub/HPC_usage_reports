@@ -27,3 +27,32 @@ In order to remove this time restriction, jobs can be submitted with the line `q
 **[gadi-nfcore-report.sh](Scripts/gadi_nfcore_report.sh)**
 
 This script gathers the job requests and usage metrics from Gadi log files, same as [gadi-queuetime-report.pl](Scripts/gadi-queuetime-report.pl). However, this script loops through the Nextflow work directory to collect `.commmand.log` files and prints all output to a .tsv file: `gadi-nf-core-joblogs.tsv`
+
+**[gadi_resource_usage.sh](Scripts/gadi_resource_usage.sh)**
+
+This script takes a nextflow run name (e.g. from `nextflow log`), pulls out
+all the task hashes from the run, and finds the relevant work directory
+to collect `.command.log` files from that run only. The script gathers the job
+requests and usage metrics from Gadi post-job files similar to [gadi-queuetime-report.pl](Scripts/gadi-queuetime-report.pl), and 
+[gadi-nfcore-report.sh](Scripts/gadi-queuetime-report.pl). 
+
+Results are printed to file: `resource_usage.<nextflow_run_name>.log`.
+
+Example usage: 
+
+```bash
+nextflow log 
+```
+```console
+TIMESTAMP               DURATION        RUN NAME                STATUS  REVISION ID     SESSION ID                              COMMAND                  
+
+2026-02-25 11:51:55     -               kickass_cantor          -       593881520d      e2ddc027-c09f-487c-a241-be9771114df6    nextflow run main.nf ...
+2026-02-25 11:54:03     50m 35s         loving_boltzmann        ERR     593881520d      e2ddc027-c09f-487c-a241-be9771114df6    nextflow run main.nf ...
+2026-02-25 13:07:06     5h 34m 53s      maniac_lorenz           OK      593881520d      e2ddc027-c09f-487c-a241-be9771114df6    nextflow run main.nf ...
+```
+
+Collect logs:
+
+```bash
+bash Scripts/gadi_resource_usage.sh maniac_lorenz
+```

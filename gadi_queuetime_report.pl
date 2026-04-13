@@ -85,7 +85,7 @@ use strict;
 use POSIX;
 use Time::Local; 
 
-my $dir=`pwd`;
+my $dir='.';
 chomp $dir; 
 
 my $prefix = '';

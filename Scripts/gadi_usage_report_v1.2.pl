@@ -1,7 +1,12 @@
 #!/usr/bin/env perl
 
+# 
+### NOTE
+### NCI PBS .o logs slightly changed format in Q1 2026
+### This script is a temporary workaround to report on old logs. 
+#
 #------------------------------------------------------------------
-# gadi_usage_report_v1.2 
+# gadi_usage_report_v1.2_pre2026 
 # Platform: NCI Gadi HPC
 #
 # Description: 
@@ -14,7 +19,8 @@
 # Version 1.2 updates: 
 # - reorder headings to bring VIP details to fore
 # - remove clock time, to reduce log complexity
-# - updated to match new NCI .o log format omitting 'NCPUs Used' from Q4.2025
+# - updated to match new NCI .o log format omitting 'NCPUs Used' from Q1.2025,
+# - will function correctly for 2025- or 2026+ files 
 # - added optional reporting of gpu metrics with `-g` 
 # - added usage option to do all logs matching pattern word:
 # - reformatted as options (min 1, max 2) rather than 1 positional arg
@@ -136,7 +142,10 @@ if (@logs){
             my @cpus = split(' ', `tail -12 $file | grep -i "NCPUs"`);
             my $cpus = $cpus[2];
 
-            chomp (my $cputime = `tail -12 $file | grep -i "CPU Time Used" | awk '{print \$7}'`);
+            chomp (my $cputime_line = `tail -12 $file | grep -i "CPU Time Used"`);
+            $cputime_line =~ m/CPU Time Used: (.+)$/;
+            my $cputime = $1; 
+            
             my ($cpu_hours, $cpu_mins, $cpu_secs, $cputime_mins) = 0;
             my $cpu_e = 0;
             if ($cpus!~m/unknown/) {  # not sure if this 'unknown' report ever happens on Gadi like it does on Artemis...
@@ -189,5 +198,10 @@ if (@logs){
     }
 }
 if (@no_report){
-    print "\n\n######\nWARNING: Usage metrics were not reported for: @no_report\n######\n\n";
+    print "\n######\n"; 
+    foreach my $file (@no_report) {
+        if ($file !~ m/.e$/ ) {
+            print "WARNING: Usage metrics were not reported for: $file\n";
+        }
+    }
 }

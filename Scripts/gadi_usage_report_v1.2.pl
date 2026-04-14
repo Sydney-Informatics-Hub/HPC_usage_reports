@@ -106,7 +106,6 @@ else {
 my $g = 0;
 if ($opt{g}) {
     $g = 1;
-    print "-g supplied - including GPU metrics\n";
 }
 
 my $report={};
@@ -156,8 +155,9 @@ if (@logs){
             }
             chomp (my $SUs = `tail -12 $file | grep -i "Service Units" | awk '{print \$3}'`);
             chomp (my $exit_status = `tail -12 $file | grep -i "Exit Status" | cut -d ":" -f2 | awk '{\$1=\$1};1' | awk '{print \$1}'`);
-            chomp (my $date = `tail -12 $file | grep -i "Resource Usage on" | awk '{print \$4}'`);
-            chomp (my $time = `tail -12 $file | grep -i "Resource Usage on" | awk '{print \$5}' | sed 's/:\$//'`);
+            chomp (my $date_line = `tail -14 $file | grep -i "Resource Usage on"`);
+            my ($date) = $date_line =~ /on\s+(\d{4}-\d{2}-\d{2})\s+\d{2}:\d{2}:\d{2}:/;
+            my $date = $1; 
 
             # jobfs
             my @jobFS = split(' ', `tail -12 $file | grep -i "JobFS"`);

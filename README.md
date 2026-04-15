@@ -29,12 +29,17 @@ Options:
   -g            Include GPU metrics
 ```
  
-At least one of `-a <val>`, `-l <val>` or `-p <val> must be supplied. `-g` can be optionallay added to any of these 3 options. Logs with no GPU usage will have `NA` for the 3 GPU output fields. 
+At least one of `-a <val>`, `-l <val>` or `-p <val> must be supplied. 
+
+GPU metrics can be included with any of the above 3 parameters with the optional `-g` flag. Logs with no GPU usage will have `NA` for the 3 GPU output fields. 
 
 Usage examples:
+
+```bash
 perl gadi_usage_report_v1.2.pl -a /path/to/logdir # all logs in dir
 perl gadi_usage_report_v1.2.pl myjob.o -g # a specific log, report GPU usage
 perl gadi_usage_report_v1.2.pl name # all logs with name including 'name'
+```
 
 Output:
 
@@ -55,7 +60,6 @@ perl ./HPC_usage_reports/Scripts/gadi_usage_report_v1.2.pl -a /scratch/aa00/my-p
 Reporting on all usage log files in /scratch/aa00/my-pbs-logs/.
 ######
 
--g supplied - including GPU metrics
 #JobName        Exit_status     Service_units   CPU_efficiency  CPUs    GPU_util        NGPUS   Mem_req Mem_used        GPU_mem_used    CPUtime_mins    Walltime_req    Walltime_mins   JobFS_req       JobFS_used Date
 hg38_1140_test_three_cpu_only.o    0       8.28    0.14    12      NA      NA      48.0GB  14.99GB NA      11.88   00:10:00        6.90    100.0MB 0B      2026-03-19
 dgxa100_4pod5drs_2ngpu.o        0       64.40   0.15    64      0.83    4       1000.0GB        34.71GB 312.89GB        130.72  00:30:00        13.42   200.0GB 0B      2026-04-13
@@ -76,7 +80,7 @@ This script takes a nextflow run name (e.g. from `nextflow log`), pulls out all 
 
 Results are printed to file: `resource_usage.<nextflow_run_name>.log`.
 
-Supply the run name as first and only positional argument to the script. If you have forgotten the run name, identify it from the output of the `nextflow log` command (most recent run name sprinted closest to command prompt): 
+The script takes requires the nextflow run name as first and only positional argument. If you have forgotten the run name, identify it from the output of the `nextflow log` command (most recent run name is printed closest to command prompt): 
 
 ```bash
 module load nextflow
@@ -91,13 +95,14 @@ TIMESTAMP               DURATION        RUN NAME                STATUS  REVISION
 2026-02-25 13:07:06     5h 34m 53s      maniac_lorenz           OK      593881520d      e2ddc027-c09f-487c-a241-be9771114df6    nextflow run main.nf ...
 ```
 
-Collect logs:
+Run the script:
 
 ```bash
 bash Scripts/gadi_nextflow_usage.sh maniac_lorenz
 ```
 
 Example output:
+
 ```console
 Job_name        Hash    Log_path        Exit_status     Service_units   NCPUs_requested CPU_time_used(mins)     CPU_efficiency  Memory_requested        Memory_used     Walltime_requested      Walltime_used(mins)JobFS_requested  JobFS_used
 PREPARE_GENOME:INDEX_MINIMAP2 (T2T)	68/7bbdc7	../work/68/7cbdc706bba77935ff576939e5478a/.command.log	0	0.19	4	2.42	0.4315	16.0GB	16.0GB	0:30:00	1.4	100.0MB	0B

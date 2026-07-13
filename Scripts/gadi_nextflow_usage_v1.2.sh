@@ -31,7 +31,7 @@ if [[ ! -s "$TMPOUT" ]]; then
     exit 1
 fi
 
-echo -e "Job_name\tHash\tLog_path\tExit_status\tService_units\tNCPUs_requested\tCPU_time_used(mins)\tCPU_efficiency\tMemory_requested\tMemory_used\tWalltime_requested\tWalltime_used(mins)\tJobFS_requested\tJobFS_used" > "$OUTPUT"
+echo -e "Job_name\tHash\tLog_path\tExit_status\tService_units\tNCPUs_requested\tCPU_time_used(mins)\tCPU_efficiency\tNGPUs_requested\tGPU_utilisation\tGPU_memory_used\tMemory_requested\tMemory_used\tWalltime_requested\tWalltime_used(mins)\tJobFS_requested\tJobFS_used" > "$OUTPUT"
 
 while read -r HASH JOBNAME; do
     LOG=$(find "$WORKDIR" -type f -path "*/${HASH}*" -name ".command.log" | head -n 1)
@@ -58,6 +58,9 @@ while read -r HASH JOBNAME; do
         cpu_time_used = "NA"
         cpu_time_used_mins = "NA"
         cpu_efficiency = "NA"
+        ngpus_requested = "NA"
+        gpu_utilisation = "NA"
+        gpu_memory_used = "NA"
         memory_requested = "NA"
         memory_used = "NA"
         walltime_requested = "NA"
@@ -76,8 +79,10 @@ while read -r HASH JOBNAME; do
         if ($0 ~ /Service Units/)      service_units = $3
         if ($0 ~ /NCPUs Requested/)    ncpus_requested = $3
         if ($0 ~ /CPU Time Used/)      cpu_time_used = $7
+        if ($0 ~ /NGPUs Requested/)    {ngpus_requested = $3; gpu_utilisation = $6}
+        if ($0 ~ /GPU Memory Used/)    gpu_memory_used = $4
         if ($0 ~ /Memory Requested/)   memory_requested = $3
-        if ($0 ~ /Memory Used/)        memory_used = $6
+        if ($0 ~ /Memory Used/ && $0 !~ /GPU Memory Used/) memory_used = $6
         if ($0 ~ /Walltime Requested/) walltime_requested = $3
         if ($0 ~ /Walltime Used/)      walltime_used = $6
         if ($0 ~ /JobFS Requested/)    jobfs_requested = $3
@@ -96,7 +101,7 @@ while read -r HASH JOBNAME; do
             cpu_efficiency = sprintf("%.4f", cpu_efficiency)
         }
 
-        print jobname, hash, logfile, exit_status, service_units, ncpus_requested, cpu_time_used_mins, cpu_efficiency, memory_requested, memory_used, walltime_requested, walltime_used_mins, jobfs_requested, jobfs_used
+        print jobname, hash, logfile, exit_status, service_units, ncpus_requested, cpu_time_used_mins, cpu_efficiency, ngpus_requested, gpu_utilisation, gpu_memory_used, memory_requested, memory_used, walltime_requested, walltime_used_mins, jobfs_requested, jobfs_used
     }' "$LOG"
 
 done < "$TMPOUT" >> "$OUTPUT"
